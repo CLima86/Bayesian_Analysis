@@ -21,8 +21,8 @@ Original Author: code is written from 'Think Bayes'
 
 # p(H | D) = [p(H) p(D | H)] / p(D)
 
-### p(H) := istheprobabilityofthehypothesisbeforeweseethedata,called the prior probability, or just 'prior'.
-### p(H|D) := iswhatwewanttocompute,theprobabilityofthehypothesis after we see the data, called the 'posterior'.
+### p(H) := is the probability of the hypothesis before we see the data,called the prior probability, or just 'prior'.
+### p(H|D) := is what we want to compute, the probability of the hypothesis after we see the data, called the 'posterior'.
 ### p(D|H) := is the probability of the data under the hypothesis, called the 'likelihood'.
 ### p(D) := is the probability of the data under any hypothesis, called the 'normalizing constant'.
 
