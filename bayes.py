@@ -254,6 +254,7 @@ class Train(Dice):
 	train class.
 	"""
 
+"""
 def main():
 	hypos = range(1, 1001)
 	suite = Train(hypos)
@@ -269,6 +270,93 @@ def main():
 				   formats=['pdf', 'eps'])
 
 
+
+if __name__ == '__main__':
+	main()
+"""
+
+# We can also construcct a power law prior that can give a more approximate answer to the locomotive
+# problem. This is because of research that has shown the relationship between companies and the 
+# number of locomotives they may have, published in 'Science'.
+# (see http://www.sciencemag.org/ content/293/5536/1818.full.pdf)
+# We construct a class to implement the power law prior above.
+
+import thinkbayes
+
+from thinkbayes import Pmf, Percentile
+
+class Train2(Dice):
+		def __init__(self, hypos, alpha=1.0):
+			"""Initializes hypotheses with a power law distribution.
+			
+			hypos: sequence of hypotheses
+			alpha: parameter of the power law prior
+			"""
+			Pmf.__init__(self)
+			for hypo in hypos:
+				self.Set(hypo, hypo**(-alpha))
+			self.Normalize()
+
+def MakePosterior(high, dataset, constructor):
+	"""Makes and updates a Suite.
+
+	high: upper bound on the range of hypotheses
+	dataset: observed data to use for the update
+	constructor: fucntion that makes a new suite
+
+	Returns: posterior Suite
+	"""
+	hypos = range(1, high + 1)
+	suite = constructor(hypos)
+	suite.name = str(high)
+
+	for data in dataset:
+		suite.Update(data)
+
+	return suite
+
+def ComparePriors():
+	"""Runs the hypothesis with two different priors and compares them."""
+	dataset = [60]
+	high = 1000
+
+	thinkplot.Clf()
+	thinkplot.PrePlot(num=2)
+
+	constructors = [Train, Train2]
+	labels = ['uniform', 'power law']
+
+	for constructor, label in zip(constructors, labels):
+		suite = MakePosterior(high, dataset, constructor)
+		suite.name = label
+		thinkplot.Pmf(suite)
+
+	thinkplot.Save(root='train4',
+				   xlabel='Number of trains',
+				   ylabel='Probability')
+
+def main():
+	ComparePriors()
+
+	dataset = [30, 60, 90]
+
+	thinkplot.Clf()
+	thinkplot.PrePlot(num=3)
+
+	for high in [500, 1000, 2000]:
+		suite = MakePosterior(high, dataset, Train2)
+		print(high, suite.Mean())
+
+	thinkplot.Save(root='train3',
+					xlabel='Number of trains',
+					ylabel='Probability')
+
+	interval = Percentile(suite, 5), Percentile(suite, 95)
+	print(interval)
+
+	cdf = thinkbayes.MakeCdfFromPmf(suite)
+	interval = cdf.Percentile(5), cdf.Percentile(95)
+	print(interval)
 
 if __name__ == '__main__':
 	main()
