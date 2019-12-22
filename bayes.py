@@ -1,6 +1,6 @@
 """
 File: bayes.py
-Original Author: code is from 'Think Bayes'
+Original Author: code is written from 'Think Bayes'
 """
 # Conditional Probability #
 # A conditional probability is a probability based on some background information.
@@ -263,11 +263,10 @@ def main():
 
 	thinkplot.PrePlot(1)
 	thinkplot.Pmf(suite)
-	thinkplot.Plot(root='train1',
+	thinkplot.Save(root='train1',
 				   xlabel='Number of Trains',
 				   ylabel='Probability',
 				   formats=['pdf', 'eps'])
-	thinkplot.show()
 
 
 
