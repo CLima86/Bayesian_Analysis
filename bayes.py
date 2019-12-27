@@ -370,6 +370,7 @@ if __name__ == '__main__':
 # A simple way to compute a credible intervsl would be to add up the probabilities of the
 # posteriror distribution and record the values corresponding to 5% and 95% probabilities.
 
+"""
 def Percentile(pmf, percentage):
 	p = percentage / 100.0
 	total = 0
@@ -377,6 +378,122 @@ def Percentile(pmf, percentage):
 		total += prob
 		if total >= p:
 			return val
-
 	interval = Percentile(suite, 5), Percentile(suite, 95)
 	print(interval)
+"""
+
+# The Euro-coin Problem #
+
+class Euro(thinkbayes.Suite):
+
+	"""This class represents hypotheses about the probability of heads."""
+
+	def Likelihood(self, data, hypo):
+		"""
+		Computes the likelihood of the data under this hypothesis.
+
+        hypo: integer value of x, the probability of heads (0-100)
+        data: string 'H' or 'T'
+		"""
+		x = hypo / 100.0
+		if data == 'H':
+			return x
+		else:
+			return 1 - x
+
+class Euro2(thinkbayes.Suite):
+	"""
+	This class represents hypotheses about the probability of heads
+	"""
+	def Likelihood(self, data, hypo):
+		"""
+		Computes the likelihood of the data under this hypothesis.
+
+		hypo: integer value of x, the probability of heads (0-100)
+		data: tuple of (number of heads, number of tails)
+		"""
+		x = hupo / 100.0
+		heads, tails = data
+		like = x**heads * (1-x)**tails
+		return like
+
+def UniformPrior():
+	"""Makes a Suite with a unifor, prior."""
+	suite = Euro(rnage(0, 101))
+	return suite
+
+def TrianglePrior():
+	"""Makes a Suite with a triangle prior."""
+	suite = Euro()
+	for x in range(0, 51):
+		suite.Set(x, x)
+	for x in range(51, 101):
+		suite.Set(x, 100 - x)
+	suite.Normalize()
+	return suite
+
+def RunUpdate(suite, heads=140, tails=110):
+	"""Updates the Suite with the given number of heads and tails.
+
+	suite: Suite object
+	heads: int
+	tails: int
+	"""
+	dataset = 'H' * heads + 'T' * tails
+
+	for data in dataset:
+		suite.Update(data)
+
+def Summarize(suite):
+	"""Prints summary statistics for the suites."""
+	print(suite.Prob(50))
+
+	print('MLE', suite.MaximumLikelihhood())
+
+	print('Mean', suite.Mean())
+	print('Median', thinkbayes.Percentile(suite))
+
+	print('5th %tile', thinkbayes.Percentile(suite, 5))
+	print('95th %tile', thinkbayes.Percentile(suite, 95))
+
+	print('CI', thinkbayes.CredibleInterval(suite, 90))
+
+def PlotSuites(suites, root):
+	"""
+	Plots two suites.
+
+	suite1, suite2: Suite objects
+	root: string filename to write
+	"""
+	thinkplot.PrePlot(len(suites))
+	thinkplot.Pmfs(suites)
+
+	thinkplot.Save(root=root,
+				   xlabel='x',
+				   ylabel='Probability',
+				   formats=['pdf', 'eps'])
+
+def main():
+	# make the priors
+	suite1 = UniformPrior()
+	suite1.name = 'uniform'
+
+	suite2 = TrianglePrior()
+	suite2.name = 'triangle'
+
+	# plot the priors
+	PlotSuites([suite1, suite2], 'euro2')
+
+	# uodate
+	RunUpdate(suite1)
+	Summarize(suite1)
+
+	RunUpdate(suite2)
+	Summarize(suite2)
+
+	# plot the posteriors
+	PlotSuites([suite1], 'euro1')
+	PlotSuites([suite1, suite2], 'euro3')
+
+if __name__ == '__main__':
+	main()
