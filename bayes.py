@@ -419,7 +419,7 @@ class Euro2(thinkbayes.Suite):
 
 def UniformPrior():
 	"""Makes a Suite with a unifor, prior."""
-	suite = Euro(rnage(0, 101))
+	suite = Euro(range(0, 101))
 	return suite
 
 def TrianglePrior():
@@ -448,10 +448,10 @@ def Summarize(suite):
 	"""Prints summary statistics for the suites."""
 	print(suite.Prob(50))
 
-	print('MLE', suite.MaximumLikelihhood())
+	print('MLE', suite.MaximumLikelihood())
 
 	print('Mean', suite.Mean())
-	print('Median', thinkbayes.Percentile(suite))
+	print('Median', thinkbayes.Percentile(suite, 50))
 
 	print('5th %tile', thinkbayes.Percentile(suite, 5))
 	print('95th %tile', thinkbayes.Percentile(suite, 95))
