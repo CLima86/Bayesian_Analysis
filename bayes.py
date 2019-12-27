@@ -360,3 +360,23 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+## Credible Intervals ##
+# Once a posterior distribution has been computed, it is useful to summarize the results with
+# a single point estimate or an interval. These can be in the form of a mean, median or the value
+# with the maximum likelihood.
+
+# A simple way to compute a credible intervsl would be to add up the probabilities of the
+# posteriror distribution and record the values corresponding to 5% and 95% probabilities.
+
+def Percentile(pmf, percentage):
+	p = percentage / 100.0
+	total = 0
+	for val, prob in pmf.Items():
+		total += prob
+		if total >= p:
+			return val
+
+	interval = Percentile(suite, 5), Percentile(suite, 95)
+	print(interval)
