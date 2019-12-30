@@ -499,3 +499,12 @@ if __name__ == '__main__':
 	main()
 
 # Beta Distribution #
+# This approach is another optimization for the same problem. Becaus the beta distribution is
+# defined on an interval between 0 and 1 (inclusive). The beta distribution is a conjugate prior,
+# meaning that if the prior distribution for x is a beta distribution, then the posterior is also
+# a beta distribution.
+# the ThinkBayes.py file has a Beta class. So we will just implement it here.
+
+beta = thinkbayes.Beta()
+beta.Update((140, 110))
+print(beta.Mean())
