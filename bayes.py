@@ -508,3 +508,9 @@ if __name__ == '__main__':
 beta = thinkbayes.Beta()
 beta.Update((140, 110))
 print(beta.Mean())
+
+
+## Odds and Addends ##
+
+# 'Odds in favor' of an event are the ratio of the probability it will occur to the probability
+# that it will not.
