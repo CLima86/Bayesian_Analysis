@@ -514,3 +514,11 @@ print(beta.Mean())
 
 # 'Odds in favor' of an event are the ratio of the probability it will occur to the probability
 # that it will not.
+
+
+class Die(thinkbaye.Pmf):
+
+	def __init__(self, sides):
+		thinkbayes.Pmf.__init__(sself)
+		for x in range(1, sides+1):
+			
