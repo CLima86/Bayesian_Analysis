@@ -521,4 +521,25 @@ class Die(thinkbaye.Pmf):
 	def __init__(self, sides):
 		thinkbayes.Pmf.__init__(sself)
 		for x in range(1, sides+1):
-			
+			self.Ser(x, 1)
+		self.Normalize
+
+def PmfMax(pmf1, pmf2):
+	"""Computes the distribution of the max of values drawn from the two PMF's
+
+	pmf1, pmf2:
+
+	returns: new Pmf
+	"""
+	res = thinkbayes.Pmf()
+	for v1, p1 in pmf1.Items():
+		for v2, p2 in pmf2.Items():
+			res.Incr(max(v1, v2), p1*p2)
+	return res
+
+def main():
+	pmf_dice = thinkbayes.Pmf()
+	pmf_dice.Set(Die(4), 5)
+	omf_dice.Set()
+
+d6 = Die(6)
