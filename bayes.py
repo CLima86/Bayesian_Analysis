@@ -515,13 +515,15 @@ print(beta.Mean())
 # 'Odds in favor' of an event are the ratio of the probability it will occur to the probability
 # that it will not.
 
+import random
+FORMATS = ['pdf', 'eps', 'png']
 
-class Die(thinkbaye.Pmf):
+class Die(thinkbayes.Pmf):
 
-	def __init__(self, sides):
-		thinkbayes.Pmf.__init__(sself)
+	def __init__(self, sides, name=''):
+		thinkbayes.Pmf.__init__(self)
 		for x in range(1, sides+1):
-			self.Ser(x, 1)
+			self.Set(x, 1)
 		self.Normalize
 
 def PmfMax(pmf1, pmf2):
@@ -540,6 +542,70 @@ def PmfMax(pmf1, pmf2):
 def main():
 	pmf_dice = thinkbayes.Pmf()
 	pmf_dice.Set(Die(4), 5)
-	omf_dice.Set()
+	pmf_dice.Set(Die(6), 4)
+	pmf_dice.Set(Die(8), 3)
+	pmf_dice.Set(Die(12), 2)
+	pmf_dice.Set(Die(20), 1)
+	pmf_dice.Normalize()
 
-d6 = Die(6)
+	mix = thinkbayes.Pmf()
+	for die, weight in pmf_dice.Items():
+		for outcome, prob in die.Items():
+			mix.Incr(outcome, weight*prob)
+
+	mix = thinkbayes.MakeMixture(pmf_dice)
+
+	colors = thinkplot.Brewer.Colors()
+	thinkplot.Save(root='dungeons3',
+				xlabel='Outcome',
+				ylabel='Probability',
+				formats=FORMATS)
+
+	random.seed(17)
+
+	d6 = Die(6, 'd6')
+
+	dice = [d6] * 3
+	three = thinkbayes.SampleSum(dice, 1000)
+	three.name = 'sample'
+	three.Print()
+
+	three_exact = d6 + d6 + d6
+	three_exact.name = 'exact'
+	three_exact.Print()
+
+	thinkplot.PrePlot(num=2)
+	thinkplot.Pmf(three)
+	thinkplot.Pmf(three_exact, linestyle='dashed')
+	thinkplot.Save(root='dungeons1',
+				xlabel='Sum of three d6',
+				ylabel='Probability',
+				axis=[2, 19, 0, 0.15],
+				formats=FORMATS)
+
+	thinkplot.Clf()
+	thinkplot.PrePlot(num=1)
+
+	# compute the distribution of the best attribute the hard way
+	best_attr2 = PmfMax(three_exact, three_exact)
+	best_attr4 = PmfMax(best_attr2, best_attr2)
+	best_attr6 = PmfMax(best_attr4, best_attr2)
+	# thinkplot.Pmf(best_attr6)
+
+	# and the easy way
+	best_atrr_cdf = three_exact.Max(6)
+	best_atrr_cdf.name = ''
+	best_atrr_pmf = thinkbayes.MakePmfFromCdf(best_atrr_cdf)
+	best_atrr_pmf.Print()
+
+	thinkplot.Pmf(best_atrr_pmf)
+	thinkplot.Save(root='dungeons2',
+				xlabel='Sum pf three d6',
+				ylabel='Probability',
+				axis=[2, 19, 0, 0.23],
+				formats=FORMATS)
+
+
+
+if __name__ == '__main__':
+	main()
